@@ -129,3 +129,95 @@ literal_to_id(['adress-',Ad],vvm,URI),
 {S, vvm:address, URI}.
 
 
+
+artist
+@@
+{S, vvm:artist, literal(Artist)}
+<=>
+atomic_list_concat(SubList,',',Artist),
+forall(member(MG,SubList),
+       rdf_assert(S, vvm:artist1, literal(MG),vvm)).
+
+
+artist
+@@
+{S, vvm:artist1, literal(Artist)}
+<=>
+{S, vvm:artist, bnode([rdf:value = literal(Artist)])}.
+
+artist
+@@
+{_S, vvm:artist, BN}\
+	{BN, rdf:value, literal(Artist)}
+	<=>
+getyear(Artist, ArtistName, Years),
+name_to_id(ArtistName,vvm,ArtistURI),
+	{BN, rdf:value, ArtistURI},
+	{ArtistURI, foaf:name, literal(ArtistName)},
+	{ArtistURI, foaf:age, literal(Years)},
+	{ArtistURI, rdf:type, foaf:'Person'} .
+
+
+artist
+@@
+{_S, vvm:artist, BN}\
+	{BN, rdf:value, literal(Artist)}
+	<=>
+getqualifier(Artist, ArtistName, Qual),
+name_to_id(ArtistName,vvm,ArtistURI),
+	{BN, rdf:value, ArtistURI},
+	{ArtistURI, foaf:name, literal(ArtistName)},
+	{BN, vvm:qualifier, literal(Qual)},
+	{ArtistURI, rdf:type, foaf:'Person'} .
+
+artist
+@@
+{_S, vvm:artist, BN}\
+	{BN, rdf:value, literal(ArtistName)}
+	<=>
+name_to_id(ArtistName,vvm,ArtistURI),
+	{BN, rdf:value, ArtistURI},
+	{ArtistURI, foaf:name, literal(ArtistName)},
+	{ArtistURI, rdf:type, foaf:'Person'} .
+
+
+getyear(Artist, ArtistName, Years):-
+	atomic_list_concat([ArtistName,Year1],'(',Artist),
+	atom_codes(Year1,[Num|_]),
+	Num > 47,
+	Num < 58,
+	atomic_list_concat(['(',Year1],Years).
+
+
+getqualifier(Artist, ArtistName, Qual):-
+	atomic_list_concat([ArtistName,Year1],'(',Artist),
+	not(atom_codes(Year1,[49|_])),
+	atomic_list_concat(['(',Year1],Qual).
+
+
+/* -- replaced by manual files
+memorialgroups
+@@
+{S, vvm:memorialgroups, literal(Groups)}
+<=>
+atomic_list_concat(SubList,',',Groups),
+forall(member(MG,SubList),
+       rdf_assert(S, vvm:memorialgroups, literal(MG),[graph(vvm)])).
+
+memorialgroups
+@@
+{S, vvm:memorialgroups, literal(Groups)}
+<=>
+atomic_list_concat(SubList,'.',Groups),
+forall(member(MG,SubList),
+       rdf_assert(S, vvm:memorialgroups, literal(MG),[graph(vvm)])).
+
+memorialgroups_to_thes
+@@
+{Thes, skos:inScheme, vvm:'MemorialGroups'},
+	{Thes, skos:note, literal(ID)}\
+{S, vvm:memorialgroups, literal(ID)}
+<=>
+{S,vvm:memorialgroup, Thes}.
+*/
+
